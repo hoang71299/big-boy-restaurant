@@ -3,6 +3,8 @@ import { twMerge } from "tailwind-merge"
 import { toast } from '@/components/ui/use-toast'
 import { UseFormSetError } from 'react-hook-form'
 import { EntityError } from '@/lib/http'
+import jwt from "jsonwebtoken";
+import authApiRequest from "@/apiRequests/auth";
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
 }
@@ -48,3 +50,38 @@ export const removeTokensFromLocalStorage = () => {
   isBrowser && localStorage.removeItem('accessToken')
   isBrowser && localStorage.removeItem('refreshToken')
 }
+
+export const checkAndRefreshToken = async (param?: {
+  onError?: () => void,
+  onSuccess?: () => void
+}) => {
+  const accessToken = getAccessTokenFromLocalStorage();
+  const refreshToken = getRefreshTokenFromLocalStorage();
+  if (!accessToken || !refreshToken) return;
+  const decodeAccessToken = jwt.decode(accessToken) as {
+    exp: number;
+    iat: number;
+  };
+  const decodeRefreshToken = jwt.decode(refreshToken) as {
+    exp: number;
+    iat: number;
+  };
+  //Thoi diem het han token la tinh theo expoch time
+  const now = Math.round(new Date().getTime() / 1000);
+  //truong hop refresh toekn thi het han ko xu li
+  if (decodeRefreshToken.exp < now) return;
+
+  if (
+    decodeAccessToken.exp - now <
+    (decodeAccessToken.exp - decodeAccessToken.iat) / 3
+  ) {
+    try {
+      const res = await authApiRequest.refreshToken();
+      setAccessTokenToLocalStorage(res.payload.data.accessToken);
+      setRefreshTokenToLocalStorage(res.payload.data.refreshToken);
+      param?.onSuccess && param.onSuccess()
+    } catch (error) {
+      param?.onError && param.onError()
+    }
+  }
+};

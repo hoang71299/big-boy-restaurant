@@ -34,6 +34,7 @@ export async function POST(request: Request) {
     })
     return Response.json(payload);
   } catch (err: any) {
+    console.log(err);
     if (err instanceof HttpError) {
       return Response.json(err.payload, {
         status: err.status

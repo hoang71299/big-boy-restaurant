@@ -1,4 +1,5 @@
 "use client";
+import RefreshToken from "@/components/refresh-token";
 import {
   useQuery,
   useMutation,
@@ -20,6 +21,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     <QueryClientProvider client={queryClient}>
       <ReactQueryDevtools initialIsOpen={false} />
       {children}
+      <RefreshToken />
     </QueryClientProvider>
   );
 }
