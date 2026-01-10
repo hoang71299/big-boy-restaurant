@@ -35,7 +35,6 @@ export default function LoginForm() {
   });
   useEffect(() => {
     if (clearTokens) {
-      removeTokensFromLocalStorage();
       setIsAuth(false);
     }
   }, [clearTokens, setIsAuth]);
@@ -46,6 +45,7 @@ export default function LoginForm() {
       toast({
         description: result.payload.message,
       });
+      setIsAuth(true);
       router.push("/manage/dashboard");
     } catch (error: any) {
       handleErrorApi({ error, setError: form.setError });
