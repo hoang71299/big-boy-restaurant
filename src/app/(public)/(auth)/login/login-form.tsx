@@ -15,13 +15,17 @@ import { LoginBody, LoginBodyType } from "@/schemaValidations/auth.schema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useLoginMutation } from "@/app/queries/useAuth";
 import { toast } from "@/components/ui/use-toast";
-import { handleErrorApi } from "@/lib/utils";
-import { use } from "react";
-import { useRouter } from "next/navigation";
+import { handleErrorApi, removeTokensFromLocalStorage } from "@/lib/utils";
+import { use, useEffect } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
+import { useAppContext } from "@/components/app-provider";
 
 export default function LoginForm() {
   const loginMutation = useLoginMutation();
+  const searchParams = useSearchParams();
+  const clearTokens = searchParams.get("clearToken");
   const router = useRouter();
+  const { setIsAuth } = useAppContext();
   const form = useForm<LoginBodyType>({
     resolver: zodResolver(LoginBody),
     defaultValues: {
@@ -29,7 +33,12 @@ export default function LoginForm() {
       password: "",
     },
   });
-
+  useEffect(() => {
+    if (clearTokens) {
+      removeTokensFromLocalStorage();
+      setIsAuth(false);
+    }
+  }, [clearTokens, setIsAuth]);
   const onSubmit = async (data: LoginBodyType) => {
     if (loginMutation.isPending) return;
     try {

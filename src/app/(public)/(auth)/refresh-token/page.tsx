@@ -25,6 +25,8 @@ export default function RefreshTokenPage() {
           router.push(redirectPathname || "/");
         },
       });
+    } else {
+      router.push("/");
     }
   }, [refreshTokenFromUrl, router, redirectPathname]);
   return <div>refresh token ...</div>;
