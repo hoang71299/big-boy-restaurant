@@ -69,7 +69,11 @@ export const checkAndRefreshToken = async (param?: {
   //Thoi diem het han token la tinh theo expoch time
   const now = Math.round(new Date().getTime() / 1000);
   //truong hop refresh toekn thi het han ko xu li
-  if (decodeRefreshToken.exp < now) return;
+  if (decodeRefreshToken.exp < now) {
+    removeTokensFromLocalStorage();
+    param?.onError && param.onError()
+    return
+  }
 
   if (
     decodeAccessToken.exp - now <
