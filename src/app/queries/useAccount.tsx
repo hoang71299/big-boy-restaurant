@@ -71,7 +71,7 @@ export const useUpdateAccountMutation = () => {
   });
 };
 
-export const useDeleteAcountMutation = () => {
+export const useDeleteAccountMutation = () => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: accountApiRequest.deleteEmployee,

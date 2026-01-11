@@ -23,8 +23,8 @@ import { Form, FormField, FormItem, FormMessage } from "@/components/ui/form";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useUploadMediaMutation } from "@/app/queries/useMedia";
 import { useAddAccountMutation } from "@/app/queries/useAccount";
-import { toast } from "@/hooks/use-toast";
 import { handleErrorApi } from "@/lib/utils";
+import { toast } from "@/components/ui/use-toast";
 
 export default function AddEmployee() {
   const [file, setFile] = useState<File | null>(null);
