@@ -6,9 +6,8 @@ import {
   getRefreshTokenFromLocalStorage,
 } from "@/lib/utils";
 import { useRouter, useSearchParams } from "next/navigation";
-import React, { useEffect, useRef } from "react";
-
-export default function LogoutPage() {
+import React, { Suspense, useEffect, useRef } from "react";
+function Logout() {
   const { mutateAsync } = useLogoutMutation();
   const router = useRouter();
   const ref = useRef<any>(null);
@@ -35,6 +34,11 @@ export default function LogoutPage() {
     } else {
       router.push("/login");
     }
-  }, [mutateAsync, router, refreshTokenFromUrl, accessTokenFromUrl]);
+  }, [mutateAsync, router, refreshTokenFromUrl, accessTokenFromUrl, setIsAuth]);
   return <div>logout ...</div>;
+}
+export default function LogoutPage() {
+  <Suspense>
+    <Logout />
+  </Suspense>;
 }
