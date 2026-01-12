@@ -43,14 +43,23 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import { getTableLink, getVietnameseTableStatus } from "@/lib/utils";
+import {
+  getTableLink,
+  getVietnameseTableStatus,
+  handleErrorApi,
+} from "@/lib/utils";
 import { useSearchParams } from "next/navigation";
 import AutoPagination from "@/components/auto-pagination";
 import { TableListResType } from "@/schemaValidations/table.schema";
 import EditTable from "@/app/manage/tables/edit-table";
 import AddTable from "@/app/manage/tables/add-table";
-import { useTableListMutation } from "@/app/queries/useTable";
+import {
+  useDeleteTableMutation,
+  useTableListMutation,
+} from "@/app/queries/useTable";
 import QRCodeTable from "@/app/manage/tables/qrcode-table";
+import { useDeleteDishMutation } from "@/app/queries/useDish";
+import { toast } from "@/components/ui/use-toast";
 
 type TableItem = TableListResType["data"][0];
 
@@ -73,6 +82,10 @@ export const columns: ColumnDef<TableItem>[] = [
     cell: ({ row }) => (
       <div className="capitalize">{row.getValue("number")}</div>
     ),
+    filterFn: (row, columnId, filterValue) => {
+      if (!filterValue) return true;
+      return String(filterValue) === String(row.getValue("number"));
+    },
   },
   {
     accessorKey: "capacity",
@@ -139,6 +152,22 @@ function AlertDialogDeleteTable({
   tableDelete: TableItem | null;
   setTableDelete: (value: TableItem | null) => void;
 }) {
+  const { mutateAsync } = useDeleteTableMutation();
+  const deleteTable = async () => {
+    if (tableDelete) {
+      try {
+        const result = await mutateAsync(tableDelete.number);
+        setTableDelete(null);
+        toast({
+          title: result.payload.message,
+        });
+      } catch (error) {
+        handleErrorApi({
+          error,
+        });
+      }
+    }
+  };
   return (
     <AlertDialog
       open={Boolean(tableDelete)}
@@ -161,7 +190,7 @@ function AlertDialogDeleteTable({
         </AlertDialogHeader>
         <AlertDialogFooter>
           <AlertDialogCancel>Cancel</AlertDialogCancel>
-          <AlertDialogAction>Continue</AlertDialogAction>
+          <AlertDialogAction onClick={deleteTable}>Continue</AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>
     </AlertDialog>
