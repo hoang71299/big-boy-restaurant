@@ -77,13 +77,6 @@ const AccountTableContext = createContext<{
 
 export const columns: ColumnDef<AccountType>[] = [
   {
-    id: "stt",
-    header: "STT",
-    cell: ({ row }) => {
-      return <>{row.index + 1}</>;
-    },
-  },
-  {
     accessorKey: "id",
     header: "ID",
   },
