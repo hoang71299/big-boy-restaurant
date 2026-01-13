@@ -7,6 +7,7 @@ import jwt from "jsonwebtoken";
 import authApiRequest from "@/apiRequests/auth";
 import { DishStatus, OrderStatus, TableStatus } from "@/constants/type"
 import envConfig from "@/config"
+import { TokenPayload } from "@/types/jwt.types"
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
 }
@@ -125,6 +126,10 @@ export const getVietnameseOrderStatus = (status: (typeof OrderStatus)[keyof type
     default:
       return 'Từ chối'
   }
+}
+
+export const decodeToken = (token: string) => {
+  return jwt.decode(token) as TokenPayload
 }
 
 export const getVietnameseTableStatus = (status: (typeof TableStatus)[keyof typeof TableStatus]) => {
