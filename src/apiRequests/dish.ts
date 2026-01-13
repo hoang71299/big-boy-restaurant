@@ -5,7 +5,7 @@ import { number } from "zod";
 const prefix = "/dishes"
 
 const dishApiRequest = {
-  list: () => http.get<DishListResType>(`${prefix}`),
+  list: () => http.get<DishListResType>(`${prefix}`, { cache: "no-cache" }),
   getDish: (id: number) => http.get<DishResType>(`${prefix}/${id}`),
   addDish: (body: CreateDishBodyType) => http.post<DishResType>(`${prefix}`, body),
   updateDish: (id: number, body: UpdateDishBodyType) => http.put<DishResType>(`${prefix}/${id}`, body),

@@ -8,6 +8,10 @@ const nextConfig = {
       },
     ],
   },
+  // typescript: {
+  //   ignoreBuildErrors: true,
+  //   tsconfigPath: "tsconfig.json",
+  // },
 };
 
 export default nextConfig;
