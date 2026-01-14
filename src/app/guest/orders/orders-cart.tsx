@@ -3,6 +3,7 @@
 import { useGuestGetOrderListMutation } from "@/app/queries/useGuest";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { toast } from "@/components/ui/use-toast";
 import socket from "@/lib/socket";
 import { formatCurrency, getVietnameseOrderStatus } from "@/lib/utils";
 import { UpdateOrderResType } from "@/schemaValidations/order.schema";
@@ -32,7 +33,17 @@ export default function OrdersCart() {
     function onDisconnect() {
       console.log("disconnect");
     }
-    function onUpdateOrder(data: UpdateOrderResType) {
+    function onUpdateOrder(data: UpdateOrderResType["data"]) {
+      const {
+        dishSnapshot: { name },
+      } = data;
+      toast({
+        description: `Món ${name} (Sl : ${
+          data.quantity
+        }) vừa được cập nhập sang trang thái ${getVietnameseOrderStatus(
+          data.status
+        )}`,
+      });
       refetch();
     }
 
