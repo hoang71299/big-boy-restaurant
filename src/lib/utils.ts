@@ -5,9 +5,10 @@ import { UseFormSetError } from 'react-hook-form'
 import { EntityError } from '@/lib/http'
 import jwt from "jsonwebtoken";
 import authApiRequest from "@/apiRequests/auth";
-import { DishStatus, OrderStatus, TableStatus } from "@/constants/type"
+import { DishStatus, OrderStatus, Role, TableStatus } from "@/constants/type"
 import envConfig from "@/config"
 import { TokenPayload } from "@/types/jwt.types"
+import guestApiRequest from "@/apiRequests/guest"
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
 }
@@ -61,14 +62,8 @@ export const checkAndRefreshToken = async (param?: {
   const accessToken = getAccessTokenFromLocalStorage();
   const refreshToken = getRefreshTokenFromLocalStorage();
   if (!accessToken || !refreshToken) return;
-  const decodeAccessToken = jwt.decode(accessToken) as {
-    exp: number;
-    iat: number;
-  };
-  const decodeRefreshToken = jwt.decode(refreshToken) as {
-    exp: number;
-    iat: number;
-  };
+  const decodeAccessToken = decodeToken(accessToken)
+  const decodeRefreshToken = decodeToken(refreshToken)
   //Thoi diem het han token la tinh theo expoch time
   const now = new Date().getTime() / 1000 - 1;
   //truong hop refresh toekn thi het han ko xu li
@@ -84,7 +79,8 @@ export const checkAndRefreshToken = async (param?: {
     (decodeAccessToken.exp - decodeAccessToken.iat) / 3
   ) {
     try {
-      const res = await authApiRequest.refreshToken();
+      const role = decodeRefreshToken.role
+      const res = (role === Role.Guest ? await guestApiRequest.refreshToken() : await authApiRequest.refreshToken())
       setAccessTokenToLocalStorage(res.payload.data.accessToken);
       setRefreshTokenToLocalStorage(res.payload.data.refreshToken);
       param?.onSuccess && param.onSuccess()
