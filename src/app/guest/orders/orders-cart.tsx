@@ -3,12 +3,14 @@
 import { useGuestGetOrderListMutation } from "@/app/queries/useGuest";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import socket from "@/lib/socket";
 import { formatCurrency, getVietnameseOrderStatus } from "@/lib/utils";
+import { UpdateOrderResType } from "@/schemaValidations/order.schema";
 import Image from "next/image";
-import { useMemo } from "react";
+import { useEffect, useMemo } from "react";
 
 export default function OrdersCart() {
-  const { data } = useGuestGetOrderListMutation();
+  const { data, refetch } = useGuestGetOrderListMutation();
   const orders = useMemo(() => {
     return data?.payload.data ?? [];
   }, [data]);
@@ -18,7 +20,32 @@ export default function OrdersCart() {
       return total + order.quantity * order.dishSnapshot.price;
     }, 0);
   }, [orders]);
+  useEffect(() => {
+    if (socket.connected) {
+      onConnect();
+    }
 
+    function onConnect() {
+      console.log(socket.id);
+    }
+
+    function onDisconnect() {
+      console.log("disconnect");
+    }
+    function onUpdateOrder(data: UpdateOrderResType) {
+      refetch();
+    }
+
+    socket.on("update-order", onUpdateOrder);
+
+    socket.on("connect", onConnect);
+    socket.on("disconnect", onDisconnect);
+
+    return () => {
+      socket.off("connect", onConnect);
+      socket.off("disconnect", onDisconnect);
+    };
+  }, []);
   return (
     <>
       {orders.map((order, index) => (
@@ -36,10 +63,10 @@ export default function OrdersCart() {
           </div>
           <div className="space-y-1">
             <h3 className="text-sm">{order.dishSnapshot.name}</h3>
-            <p className="text-xs font-semibold">
+            <div className="text-xs font-semibold">
               {formatCurrency(order.dishSnapshot.price)} đ *{" "}
               <Badge className="px-1">{order.quantity}</Badge>
-            </p>
+            </div>
           </div>
           <div className="flex-shrink-0 ml-auto flex justify-center items-center">
             <Badge variant="secondary">
