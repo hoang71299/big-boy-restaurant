@@ -203,6 +203,15 @@ export default function OrderTable() {
       });
       refetch();
     }
+
+    function onPayOrder(data: PayGuestOrdersResType["data"]) {
+      const { guest } = data[0];
+      toast({
+        description: `Khách hàng ${guest?.name} tại bàn số ${guest?.tableNumber} vừa thanh toán ${data.length} món`,
+      });
+      refetch();
+    }
+    socket.on("payment", onPayOrder);
     socket.on("new-order", onNewOrder);
     socket.on("update-order", onUpdateOrder);
 

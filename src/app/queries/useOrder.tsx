@@ -35,3 +35,9 @@ export const useGetOrderDetailQuery = ({
     enabled: enable,
   });
 };
+
+export const usePayMutation = () => {
+  return useMutation({
+    mutationFn: orderApiRequest.payOrder,
+  });
+};
