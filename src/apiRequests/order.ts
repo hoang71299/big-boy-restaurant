@@ -1,5 +1,6 @@
 import http from '@/lib/http'
 import {
+  CreateOrdersBodyType,
   CreateOrdersResType,
   GetOrderDetailResType,
   GetOrdersQueryParamsType,
@@ -11,7 +12,7 @@ import {
 } from '@/schemaValidations/order.schema'
 import queryString from 'query-string';
 const orderApiRequest = {
-  createOrder: (body: CreateOrdersResType) => http.post<CreateOrdersResType>('/orders', body),
+  createOrder: (body: CreateOrdersBodyType) => http.post<CreateOrdersResType>('/orders', body),
   getOrderList: (queryParams: GetOrdersQueryParamsType) => http.get<GetOrdersResType>('/orders?' + queryString.stringify({
     fromDate: queryParams.fromDate?.toISOString(),
     toDate: queryParams.toDate?.toISOString()
