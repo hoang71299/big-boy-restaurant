@@ -1,5 +1,6 @@
 import http from "@/lib/http";
-import { AccountListResType, AccountResType, ChangePasswordBodyType, ChangePasswordV2BodyType, ChangePasswordV2ResType, CreateEmployeeAccountBodyType, UpdateEmployeeAccountBodyType, UpdateMeBodyType } from "@/schemaValidations/account.schema";
+import { AccountListResType, AccountResType, ChangePasswordBodyType, ChangePasswordV2BodyType, ChangePasswordV2ResType, CreateEmployeeAccountBodyType, CreateGuestBodyType, CreateGuestResType, GetGuestListQueryParamsType, GetListGuestsResType, UpdateEmployeeAccountBodyType, UpdateMeBodyType } from "@/schemaValidations/account.schema";
+import queryString from "query-string";
 const prefix = '/accounts'
 const accountApiRequest = {
   me: () => http.get<AccountResType>('/accounts/me'),
@@ -28,6 +29,11 @@ const accountApiRequest = {
   addEmployee: (body: CreateEmployeeAccountBodyType) => http.post<AccountResType>(`${prefix}`, body),
   updateEmployee: (id: number, body: UpdateEmployeeAccountBodyType) => http.put<AccountResType>(`${prefix}/detail/${id}`, body),
   getEmployee: (id: number) => http.get<AccountResType>(`${prefix}/detail/${id}`),
-  deleteEmployee: (id: number) => http.delete<AccountResType>(`${prefix}/detail/${id}`)
+  deleteEmployee: (id: number) => http.delete<AccountResType>(`${prefix}/detail/${id}`),
+  guestList: (queryParams: GetGuestListQueryParamsType) => http.get<GetListGuestsResType>(`${prefix}/guests?` + queryString.stringify({
+    fromDate: queryParams.fromDate?.toISOString(),
+    toDare: queryParams.toDate?.toISOString()
+  })),
+  createGuest: (body: CreateGuestBodyType) => http.post<CreateGuestResType>(`${prefix}/guests`, body)
 }
 export default accountApiRequest;
