@@ -55,6 +55,7 @@ export default function OrdersCart() {
     return () => {
       socket.off("connect", onConnect);
       socket.off("disconnect", onDisconnect);
+      socket.off("update-order", onUpdateOrder);
     };
   }, []);
   return (
