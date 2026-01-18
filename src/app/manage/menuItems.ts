@@ -23,11 +23,6 @@ const menuItems = [
   },
 
   {
-    title: 'Phân tích',
-    Icon: LineChart,
-    href: '/manage/analytics'
-  },
-  {
     title: 'Nhân viên',
     Icon: Users2,
     href: '/manage/accounts'
