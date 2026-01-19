@@ -5,6 +5,7 @@ import type { NextRequest } from 'next/server'
 const guestPaths = ['/guest']
 const managePaths = ['/manage']
 const privatePaths = [...guestPaths, ...managePaths]
+const onlyOwnerPaths = ['/manage/accounts']
 const unAuthPaths = ['/login']
 // This function can be marked `async` if using `await` inside
 export function middleware(request: NextRequest) {
@@ -32,7 +33,8 @@ export function middleware(request: NextRequest) {
     const role = decodeToken(refreshToken).role
     const isGuestGoToManagePath = role === Role.Guest && managePaths.some((path) => pathname.startsWith(path))
     const isNotGuestGoToGuestPath = role !== Role.Guest && guestPaths.some((path) => pathname.startsWith(path))
-    if (isGuestGoToManagePath || isNotGuestGoToGuestPath) {
+    const isNotOwnerGoToOwnerPath = role !== Role.Owner && onlyOwnerPaths.some((path) => pathname.startsWith(path))
+    if (isGuestGoToManagePath || isNotGuestGoToGuestPath || isNotOwnerGoToOwnerPath) {
       return NextResponse.redirect(new URL('/', request.url))
     }
   }

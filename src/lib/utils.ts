@@ -149,7 +149,10 @@ export function removeAccents(str: string) {
     .replace(/đ/g, 'd')
     .replace(/Đ/g, 'D')
 }
-
+export const getRoleFromClient = () => {
+  const accessToken = getAccessTokenFromLocalStorage()
+  return accessToken ? decodeToken(accessToken).role : undefined
+}
 export const simpleMatchText = (fullText: string, matchText: string) => {
   return removeAccents(fullText.toLowerCase()).includes(removeAccents(matchText.trim().toLowerCase()))
 }
