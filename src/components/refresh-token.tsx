@@ -10,6 +10,8 @@ import { usePathname, useRouter } from "next/navigation";
 import React, { useEffect } from "react";
 import jwt from "jsonwebtoken";
 import authApiRequest from "@/apiRequests/auth";
+import socket from "@/lib/socket";
+import { on } from "events";
 const UNAUTHENTICATED_PATHS = ["/login", "/logout", "refresh-token"];
 export default function RefreshToken() {
   const pathname = usePathname();
@@ -20,24 +22,41 @@ export default function RefreshToken() {
     }
     let interval: any = null;
 
-    checkAndRefreshToken({
-      onError: () => {
-        clearInterval(interval);
-        router.push("/login");
-      },
-    });
+    const onRefreshToken = (force?: boolean) =>
+      checkAndRefreshToken({
+        onError: () => {
+          clearInterval(interval);
+          router.push("/login");
+        },
+        force,
+      });
+    onRefreshToken();
     const TiMEOUT = 1000;
-    interval = setInterval(
-      () =>
-        checkAndRefreshToken({
-          onError: () => {
-            clearInterval(interval);
-            router.push("/login");
-          },
-        }),
-      TiMEOUT
-    ); //check every 1 second
-    return () => clearInterval(interval);
+    interval = setInterval(onRefreshToken, TiMEOUT);
+    if (socket.connected) {
+      onConnect();
+    }
+
+    function onConnect() {
+      console.log(socket.id);
+    }
+
+    function onDisconnect() {
+      console.log("disconnect");
+    } //check every 1 second
+    function onRefreshTokenSocket() {
+      onRefreshToken(true);
+    }
+    socket.on("connect", onConnect);
+    socket.on("disconnect", onDisconnect);
+    socket.on("refresh-token", onRefreshTokenSocket);
+
+    return () => {
+      clearInterval(interval);
+      socket.off("connect", onConnect);
+      socket.off("disconnect", onDisconnect);
+      socket.off("refresh-token", onRefreshTokenSocket);
+    };
   }, [pathname, router]);
   return null;
 }

@@ -190,7 +190,7 @@ export default function OrderTable() {
         description: `Món ${name} (Sl : ${
           data.quantity
         }) vừa được cập nhập sang trang thái ${getVietnameseOrderStatus(
-          data.status
+          data.status,
         )}`,
       });
       refetch();
@@ -303,7 +303,7 @@ export default function OrderTable() {
                   ? getVietnameseOrderStatus(
                       table
                         .getColumn("status")
-                        ?.getFilterValue() as (typeof OrderStatusValues)[number]
+                        ?.getFilterValue() as (typeof OrderStatusValues)[number],
                     )
                   : "Trạng thái"}
                 <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
@@ -324,7 +324,7 @@ export default function OrderTable() {
                               currentValue ===
                                 table.getColumn("status")?.getFilterValue()
                                 ? ""
-                                : currentValue
+                                : currentValue,
                             );
                           setOpenStatusFilter(false);
                         }}
@@ -335,7 +335,7 @@ export default function OrderTable() {
                             table.getColumn("status")?.getFilterValue() ===
                               status
                               ? "opacity-100"
-                              : "opacity-0"
+                              : "opacity-0",
                           )}
                         />
                         {getVietnameseOrderStatus(status)}
@@ -367,7 +367,7 @@ export default function OrderTable() {
                             ? null
                             : flexRender(
                                 header.column.columnDef.header,
-                                header.getContext()
+                                header.getContext(),
                               )}
                         </TableHead>
                       );
@@ -386,7 +386,7 @@ export default function OrderTable() {
                         <TableCell key={cell.id}>
                           {flexRender(
                             cell.column.columnDef.cell,
-                            cell.getContext()
+                            cell.getContext(),
                           )}
                         </TableCell>
                       ))}
