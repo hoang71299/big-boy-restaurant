@@ -1,21 +1,16 @@
 import Link from "next/link";
 import { Menu, Package2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import {
-  Sheet,
-  SheetContent,
-  SheetDescription,
-  SheetHeader,
-  SheetTitle,
-  SheetTrigger,
-} from "@/components/ui/sheet";
+import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import DarkModeToggle from "@/components/dark-mode-toggle";
 import NavItems from "@/app/(public)/nav-items";
 
 export default function Layout({
   children,
+  modal,
 }: Readonly<{
   children: React.ReactNode;
+  modal: React.ReactNode;
 }>) {
   return (
     <div className="flex min-h-screen w-full flex-col relative">
@@ -42,10 +37,6 @@ export default function Layout({
             </Button>
           </SheetTrigger>
           <SheetContent side="left">
-            <SheetHeader className="sr-only">
-              <SheetTitle />
-              <SheetDescription />
-            </SheetHeader>
             <nav className="grid gap-6 text-lg font-medium">
               <Link
                 href="#"
@@ -65,6 +56,7 @@ export default function Layout({
       </header>
       <main className="flex flex-1 flex-col gap-4 p-4 md:gap-8 md:p-8">
         {children}
+        {modal}
       </main>
     </div>
   );
