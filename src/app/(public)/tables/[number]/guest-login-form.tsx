@@ -13,11 +13,12 @@ import {
 import { useParams, useRouter, useSearchParams } from "next/navigation";
 import { useEffect } from "react";
 import { useLoginMutation } from "@/app/queries/useGuest";
-import { useAppContext } from "@/components/app-provider";
+import { useAppStore } from "@/components/app-provider";
 import { generateSocketInstance, handleErrorApi } from "@/lib/utils";
 
 export default function GuestLoginForm() {
-  const { setRole, setSocket } = useAppContext();
+  const setRole = useAppStore((state) => state.setRole);
+  const setSocket = useAppStore((state) => state.setSocket);
   const searchParams = useSearchParams();
   const params = useParams();
   const tableNumber = Number(params.number);

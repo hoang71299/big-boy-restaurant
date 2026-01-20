@@ -1,7 +1,7 @@
 "use client";
 
 import { useGuestGetOrderListMutation } from "@/app/queries/useGuest";
-import { useAppContext } from "@/components/app-provider";
+import { useAppStore } from "@/components/app-provider";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { toast } from "@/components/ui/use-toast";
@@ -16,7 +16,7 @@ import { useEffect, useMemo } from "react";
 
 export default function OrdersCart() {
   const { data, refetch } = useGuestGetOrderListMutation();
-  const { socket } = useAppContext();
+  const socket = useAppStore((state) => state.socket);
   const orders = useMemo(() => {
     return data?.payload.data ?? [];
   }, [data]);

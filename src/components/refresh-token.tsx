@@ -11,12 +11,13 @@ import React, { useEffect } from "react";
 import jwt from "jsonwebtoken";
 import authApiRequest from "@/apiRequests/auth";
 import { on } from "events";
-import { useAppContext } from "@/components/app-provider";
+import { useAppStore } from "@/components/app-provider";
 const UNAUTHENTICATED_PATHS = ["/login", "/logout", "refresh-token"];
 export default function RefreshToken() {
   const pathname = usePathname();
   const router = useRouter();
-  const { socket, disconnectSocket } = useAppContext();
+  const socket = useAppStore((state) => state.socket);
+  const disconnectSocket = useAppStore((state) => state.disconnectSocket);
   useEffect(() => {
     if (UNAUTHENTICATED_PATHS.includes(pathname)) {
       return;

@@ -1,7 +1,7 @@
 "use client";
 
 import { useSetTokenToCookieMutation } from "@/app/queries/useAuth";
-import { useAppContext } from "@/components/app-provider";
+import { useAppStore } from "@/components/app-provider";
 import { toast } from "@/components/ui/use-toast";
 import { decodeToken, generateSocketInstance } from "@/lib/utils";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -9,7 +9,8 @@ import { decode } from "punycode";
 import { useEffect, useRef } from "react";
 
 export default function OAuthPage() {
-  const { setRole, setSocket } = useAppContext();
+  const setRole = useAppStore((state) => state.setRole);
+  const setSocket = useAppStore((state) => state.setSocket);
   const { mutateAsync } = useSetTokenToCookieMutation();
   const searchParams = useSearchParams();
   const accessToken = searchParams.get("accessToken");
