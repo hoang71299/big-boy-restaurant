@@ -56,13 +56,14 @@ const menuItems: {
   },
 ];
 export default function NavItems({ className }: { className?: string }) {
-  const { isAuth, role, setRole } = useAppContext();
+  const { isAuth, role, setRole, disconnectSocket } = useAppContext();
   const logoutMutation = useLogoutMutation();
   const router = useRouter();
   const logout = async () => {
     try {
       await logoutMutation.mutateAsync();
       setRole();
+      disconnectSocket();
       router.push("/");
     } catch (error: any) {
       handleErrorApi({

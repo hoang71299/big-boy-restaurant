@@ -1,6 +1,7 @@
 "use client";
 
 import { useGuestGetOrderListMutation } from "@/app/queries/useGuest";
+import { useAppContext } from "@/components/app-provider";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { toast } from "@/components/ui/use-toast";
@@ -16,6 +17,7 @@ import { useEffect, useMemo } from "react";
 
 export default function OrdersCart() {
   const { data, refetch } = useGuestGetOrderListMutation();
+  const { socket } = useAppContext();
   const orders = useMemo(() => {
     return data?.payload.data ?? [];
   }, [data]);
@@ -59,16 +61,16 @@ export default function OrdersCart() {
           price: 0,
           quantity: 0,
         },
-      }
+      },
     );
   }, [orders]);
   useEffect(() => {
-    if (socket.connected) {
+    if (socket?.connected) {
       onConnect();
     }
 
     function onConnect() {
-      console.log(socket.id);
+      console.log(socket?.id);
     }
 
     function onDisconnect() {
@@ -82,7 +84,7 @@ export default function OrdersCart() {
         description: `Món ${name} (Sl : ${
           data.quantity
         }) vừa được cập nhập sang trang thái ${getVietnameseOrderStatus(
-          data.status
+          data.status,
         )}`,
       });
       refetch();
@@ -95,18 +97,18 @@ export default function OrdersCart() {
       });
       refetch();
     }
-    socket.on("payment", onPayOrder);
-    socket.on("update-order", onUpdateOrder);
+    socket?.on("payment", onPayOrder);
+    socket?.on("update-order", onUpdateOrder);
 
-    socket.on("connect", onConnect);
-    socket.on("disconnect", onDisconnect);
+    socket?.on("connect", onConnect);
+    socket?.on("disconnect", onDisconnect);
 
     return () => {
-      socket.off("connect", onConnect);
-      socket.off("disconnect", onDisconnect);
-      socket.off("update-order", onUpdateOrder);
+      socket?.off("connect", onConnect);
+      socket?.off("disconnect", onDisconnect);
+      socket?.off("update-order", onUpdateOrder);
     };
-  }, []);
+  }, [refetch, socket]);
   return (
     <>
       {orders.map((order, index) => (
