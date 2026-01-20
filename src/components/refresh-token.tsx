@@ -10,7 +10,6 @@ import { usePathname, useRouter } from "next/navigation";
 import React, { useEffect } from "react";
 import jwt from "jsonwebtoken";
 import authApiRequest from "@/apiRequests/auth";
-import socket from "@/lib/socket";
 import { on } from "events";
 import { useAppContext } from "@/components/app-provider";
 const UNAUTHENTICATED_PATHS = ["/login", "/logout", "refresh-token"];
@@ -60,6 +59,6 @@ export default function RefreshToken() {
       socket?.off("disconnect", onDisconnect);
       socket?.off("refresh-token", onRefreshTokenSocket);
     };
-  }, [pathname, router, socket]);
+  }, [pathname, router, socket, disconnectSocket]);
   return null;
 }
